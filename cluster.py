@@ -1,6 +1,23 @@
-# cluster.py
-# written by Yi Yang @ 2/21/14
-# prepare the data set for clustering. Here we have different choices of the dictionary and clustering algorithm 
+## cluster.py
+## written by Yi Yang @ 2/21/14
+## tweets/news clustering. 
+
+##How to use this file:
+##Input:
+##   the stream number: topic
+##   the start time for acquiring the API data: start_time
+##   the end time for acquiring the API data: end_time
+##   local stop words list (optional): stop_local (e.g. stop_seattle in line 266)
+##
+##Then, run the following commands:
+##
+##  h = HCluster(HCluster.get_test_data(topic, start_time, end_time), stop_local)
+##  keywords, content, id_map = h.get_features()
+##  dic = h.prepare_grid(keywords)
+##  clusters = h.cluster(content, dic)
+##  id_map = h.label_articles(clusters, id_map)
+##  h.print_cluster(clusters,id_map)    # this line is optional
+
 
 import json
 import numpy
@@ -48,7 +65,7 @@ class HCluster:
     return jdata
 
   def get_words(self, data):
-    """Pre-process the title: remove unnecessary info and split it into a list of words"""   
+    """Pre-process the title: remove unnecessary info & split it into a list of single words"""   
     # Remove all the HTML tags
     txt=re.compile(r'<[^>]+>').sub('',data)
     # Remove all the urls
@@ -60,12 +77,13 @@ class HCluster:
 
   def get_features(self):
     """Put all the pre-processed titles into an array & create a keywords list"""
+    # Record the array of processed data
     content = []
+    # Map id to object
     id_to_item = {}
     for item in self.data:
       temp_content = []
       doc_id = item['id']
-      words = []
       try:
         words = self.get_words(item['title'])
       except:
@@ -124,7 +142,7 @@ class HCluster:
     return clusters
 
   def label_articles(self, clusters, id_to_item):
-    """Label the articles in each cluster. This function is associated with cluster"""
+    """Label the cluster number of each article. This function is associated with cluster"""
     cluster_id = 0
     for clus in clusters:
       #print clus
@@ -212,7 +230,6 @@ class HCluster:
         print item
 
 
-
 def total_score(lis):
   total_score = 0
   for (word,score) in lis:
@@ -252,10 +269,10 @@ if __name__ == '__main__':
   stop_charlotte = ["carolina","charlotte","nc","clt","wcnc","cltnews","wccbcharlotte","wbtv","power98fm","northcarolina"]
   end_time = int(time.time())
   start_time = end_time-3600*4
-  topic = 100080
-  h = HCluster(HCluster.get_test_data(topic, start_time, end_time), stop_charlotte)
+  topic = 100103
+  h = HCluster(HCluster.get_test_data(topic, start_time, end_time), stop_seattle)
   keywords, content, id_map = h.get_features()
   dic = h.prepare_grid(keywords)
-  clusters = h.cluster_with_keywords(content, dic)
-  id_map = h.label_articles_with_keywords(clusters, id_map)
-  h.print_cluster_with_keywords(clusters,id_map)
+  clusters = h.cluster(content, dic)
+  id_map = h.label_articles(clusters, id_map)
+  h.print_cluster(clusters,id_map)
