@@ -7,7 +7,7 @@
 ##   the stream number: topic
 ##   the start time for acquiring the API data: start_time
 ##   the end time for acquiring the API data: end_time
-##   local stop words list (optional): stop_local (e.g. stop_seattle in line 268)
+##   local stop words list (optional): stop_local (e.g. stop_seattle in line 269)
 ##
 ##Then, run the following commands:
 ##
@@ -29,7 +29,7 @@ import urllib2
 
 from scipy.cluster.hierarchy import *
 
-global_stopwords = [ ".", "...", ",", "&", "&amp;", "-", "_", "a", "able", "about", "above", "according", "accordingly", "across", "actually", "after", "afterwards", "again", "against", "ain","ain't", "all", "alert","allow", "allows", "almost", "along", "already", "also", "although", "always", "am", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "appreciate", "appropriate", "are",  "aren", "aren't", "around", "as", "aside", "ask", "asking", "associated", "at", "available", "away", "awfully", "b", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "behind", "being", "believe", "below", "beside", "besides", "best", "better", "between", "beyond", "both","breaking", "brief", "but", "by", "c", "c'mon", "c's", "came", "can", "can't", "cannot", "cant", "cause", "causes", "certain", "certainly", "changes", "clearly", "co", "com", "come", "comes", "concerning", "consequently", "consider", "considering", "contain", "containing", "contains", "corresponding", "could", "couldn", "couldn't", "course", "currently", "d","day","days", "de", "definitely", "described", "despite", "did",  "didn","didn't", "different", "do", "does", "doesn","doesn't", "doing", "don","don't", "done", "downwards", "during", "e", "each", "edu", "eg", "eight", "either", "else", "elsewhere", "en", "enough", "entirely", "especially", "et", "etc", "even", "ever", "every", "everybody", "everyone", "everything", "everywhere", "ex", "exactly", "example", "except", "f", "far", "few", "fifth", "first", "five", "followed", "following", "follows", "for", "former", "formerly", "forth", "four", "from", "further", "furthermore", "g", "get", "gets", "getting", "given", "gives", "go", "goes", "going", "gone", "got", "gotten", "greetings", "h", "had", "hadn","hadn't", "happens", "hardly", "has", "hasn","hasn't", "have", "haven","haven't", "having", "he", "he's", "hello", "help", "hence", "her", "here", "here's", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "hi", "him", "himself", "his", "hither", "hopefully", "how", "howbeit", "however","http","https", "i", "i'd", "i'll", "i'm", "i've", "ie", "if", "ignored", "immediate", "in", "inasmuch", "inc", "indeed", "indicate", "indicated", "indicates", "inner", "insofar", "instead", "into", "inward", "is", "isn","isn't", "it", "it'd", "it'll", "it's", "its", "itself", "j", "just", "k", "keep", "keeps", "kept", "know", "knows", "known", "l","ll", "last", "lately", "later", "latter", "latterly", "least", "less", "lest", "let", "let's", "like", "liked", "likely", "little", "look", "looking", "looks", "ltd", "m", "mainly", "many", "may", "maybe", "me", "mean", "meanwhile", "merely", "might", "more", "moreover","morning", "most", "mostly", "much", "must", "my", "myself", "n", "name", "namely", "nd", "near", "nearly", "necessary", "need", "needs", "neither", "never", "nevertheless", "new","news", "next", "nine", "no", "nobody", "non", "none", "noone", "nor", "normally", "not", "nothing", "novel", "now", "nowhere", "o", "obviously", "of", "off", "often", "oh", "ok", "okay", "old", "on", "once", "one", "ones", "only", "onto", "or", "other", "others", "otherwise", "ought", "our", "ours", "ourselves", "out", "outside", "over", "overall", "own", "p", "particular", "particularly", "per", "perhaps", "placed", "please", "plus", "possible", "presumably", "probably", "provides", "q", "que", "quite", "qv", "r", "rather", "rd", "re", "really", "reasonably", "regarding", "regardless", "regards", "relatively", "respectively", "right", "rt", "s", "said", "same", "saw", "say", "saying", "says", "second", "secondly", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "self", "selves", "sensible", "sent", "serious", "seriously", "seven", "several", "shall", "she", "should", "shouldn","shouldn't", "since", "six", "so", "some", "somebody", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "soon", "sorry", "specified", "specify", "specifying", "still", "sub", "such", "sup", "sure", "t", "t's", "take", "taken", "tell", "tends", "th", "than", "thank", "thanks", "thanx", "that", "that's", "thats", "the", "their", "theirs", "them", "themselves", "then", "thence", "there", "there's", "thereafter", "thereby", "therefore", "therein", "theres", "thereupon", "these", "they", "they'd", "they'll", "they're", "they've", "think", "third", "this", "thorough", "thoroughly", "those", "though", "three", "through", "throughout", "thru", "thus", "to", "today","tomorrow","tonight","together", "too", "took", "toward", "towards", "tried", "tries", "truly", "try", "trying", "twice", "two", "u", "un", "under", "unfortunately", "unless", "unlikely", "until", "unto", "up", "upon", "us", "use", "used", "useful", "uses", "using", "usually", "uucp", "v", "value", "various", "very", "via", "viz", "vs", "w", "want", "wants", "was", "wasn","wasn't", "way", "we", "we'd", "we'll", "we're", "we've", "welcome", "well", "went", "were", "weren","weren't", "what", "what's", "whatever", "when", "whence", "whenever", "where", "where's", "whereafter", "whereas", "whereby", "wherein", "whereupon", "wherever", "whether", "which", "while", "whither", "who", "who's", "whoever", "whole", "whom", "whose", "why", "will", "willing", "wish", "with", "within", "without","won", "won't", "wonder", "would", "would", "wouldn","wouldn't", "x", "y", "yes", "yet", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves", "z", "san", "el", "la", "los", "por", "las", "em", "zero" ]
+global_stopwords = [ ".", "...", ",", "&", "&amp;", "-", "_", "a","abc", "able", "about", "above", "according", "accordingly", "across", "actually", "after", "afterwards", "again", "against", "ain", "all", "alert","alerts","allow", "allows", "almost", "along", "already", "also", "although", "always","a.m", "am", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "appreciate", "appropriate", "are",  "aren", "around", "as", "aside", "ask", "asking", "associated", "at", "available", "away", "awfully", "b", "be", "became", "because","b/c", "become", "becomes", "becoming", "been", "before", "beforehand", "behind", "being", "believe", "below", "beside", "besides", "best", "better", "between", "beyond","blvd", "both","boulevard","breaking", "breakingnews", "brief", "but", "by", "c", "came", "can", "cannot", "cant", "cause", "causes", "certain", "certainly", "changes", "clearly", "co", "com", "come", "comes", "concerning", "consequently", "consider", "considering", "contain", "containing", "contains", "corresponding", "could", "couldn", "course", "currently", "d","day","days", "de", "definitely", "described", "despite", "did",  "didn", "different", "do", "does", "doesn", "doing", "don", "done", "downwards", "during", "e", "each", "edu", "e.g","eg", "either", "else", "elsewhere", "en", "enough", "entirely", "especially", "et", "etc", "even", "ever", "every", "everybody", "everyone", "everything", "everywhere", "ex", "exactly", "example", "except", "f","facebook", "far", "few", "followed", "following", "follows", "for", "former", "formerly", "from", "further", "furthermore", "g", "get", "gets", "getting", "given", "gives", "go", "goes", "going", "gone", "got", "gotten", "greetings", "h", "had", "hadn", "happens", "hardly", "has", "hasn", "have", "haven", "having", "he", "hello", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "hi", "him", "himself", "his", "hither", "hopefully", "how", "howbeit", "however","http","https", "i", "ie","i.e", "if", "ignored", "immediate", "in", "inasmuch", "inc", "indeed", "indicate", "indicated", "indicates", "inner", "insofar", "instead", "into", "inward", "is", "isn", "it", "its", "itself", "j", "just", "k", "keep", "keeps", "kept", "known", "l","ll", "last", "lately", "later", "latter", "latterly", "least", "less", "lest", "let", "like", "liked", "likely", "little", "look", "looking", "looks", "ltd", "m", "mainly", "many", "may", "maybe", "me", "mean", "meanwhile", "merely", "might", "more", "moreover","morning", "most", "mostly", "much", "must", "my", "myself", "n", "name", "namely","nb", "nd", "near", "nearly", "necessary", "need", "needs", "neither", "never", "nevertheless","news", "next", "no", "nobody", "non", "none", "noone", "nor", "normally", "not", "nothing", "novel", "now", "nowhere", "o", "obviously", "of", "off", "often", "oh", "ok", "okay", "old", "on", "once", "one", "ones", "only", "onto", "or", "other", "others", "otherwise", "ought", "our", "ours", "ourselves", "out", "outside", "over", "overall", "p", "particular", "particularly", "per", "perhaps", "placed", "please","pls", "plus","p.m","pm", "possible", "presumably", "probably", "provides", "q", "que", "quite", "qv", "r", "rather", "rd", "re", "really", "reasonably", "regarding", "regardless", "regards", "relatively", "report","reported","reports","respectively", "right", "rt", "s", "said", "same", "saw", "say", "saying", "says","sb", "second", "secondly", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "self", "selves", "sensible", "sent", "serious", "seriously", "several", "shall", "she", "should", "shouldn", "since", "so", "some", "somebody", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "soon", "sorry", "specified", "specify", "specifying","st", "still", "sub", "such", "sup", "sure", "t",  "take", "taken", "tell", "tends", "th", "than", "thank", "thanks", "thanx", "that", "thats", "the", "their", "theirs", "them", "themselves", "then", "thence", "there",  "thereafter", "thereby", "therefore", "therein", "theres", "thereupon", "these", "they", "think", "this", "thorough", "thoroughly", "those", "though", "through", "throughout", "thru", "thus", "to", "today","tomorrow","tonight","together", "too", "took", "toward", "towards", "tried", "tries", "truly", "try", "trying", "u", "un", "under", "unfortunately", "unless", "unlikely", "until", "unto", "up", "upon", "us", "use", "used", "useful", "uses", "using", "usually", "uucp", "v", "value", "various", "very", "via", "viz", "vs", "w", "want", "wants", "was", "wasn", "way", "we", "welcome", "well", "went", "were", "weren", "what", "whatever", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "whereupon", "wherever", "whether", "which", "while", "whither", "who", "whoever", "whole", "whom", "whose", "why", "will", "willing", "wish", "with", "within", "without","won", "wonder", "would", "would", "wouldn", "x", "y", "yes", "yet", "you", "your", "yours", "yourself", "yourselves", "z", "san", "el", "la", "los", "por", "las", "em"]
 keywords = {}
 
 # parameters   
@@ -72,9 +72,9 @@ class HCluster:
     # Remove all the urls
     txt=re.compile(r'(?:https?\://)\S+').sub('',txt)
     # Split words by all non-alpha characters
-    words=re.compile(r'[^A-Z^a-z^0-9^.^/^:]+').split(txt)
+    words=re.compile(r'[^A-Z^a-z^0-9^.^/^:^-]+').split(txt)
     # Convert to lowercase
-    return [word.strip('.:/').lower() for word in words if word!='']
+    return [word.strip('.:/-').lower() for word in words if word!='']
 
   def get_features(self):
     """Put all the pre-processed titles into an array & create a keywords list"""
@@ -218,8 +218,8 @@ class HCluster:
   
   def print_cluster_with_keywords(self, clusters, id_to_item):
     """Print the clustering result. This function is associated with cluster_with_keywords"""
-    pprint.pprint(id_to_item)
-    pprint.pprint(clusters)
+ #   pprint.pprint(id_to_item)
+ #   pprint.pprint(clusters)
     for (cluster,keywords) in clusters:
       print "\ncluster------------------------"
       i = 0
@@ -265,15 +265,31 @@ def detect_cluster_connection(clusters1,clusters2,thres):
         break
   
 if __name__ == '__main__':
-  stop_saltlake = ["city","lake","fanx","fox13now","salt","slc","ut","utleg","utah","utpol","801","sltrib","kutv","slcpd"]
-  stop_seattle = ["seattle","seattlepd","wa","washington","komo","komonews","kiro","wawx"]
-  stop_charlotte = ["carolina","charlotte","nc","ncpol","ncsen","clt","wcnc","cltnews","wccbcharlotte","wbtv","power98fm","northcarolina"]
-  end_time = int(time.time())
+  stop_saltlake = ["abc4utah","city","fanx","fox13now","kutv","lake","mormon","mormons","salt","saltlakecity","slc","slcpd","sltrib","sundance","ut","utah","utleg","utpol","utwx","zion","zionnationalpark", "801"]
+  stop_seattle = ["kiro","komo","komonews","q13fox","seattle","seattlepd","sr","wa","washington","wawx","wsdot"]
+  stop_charlotte = ["bobcats","carolina","charlotte","clt","cltnews","cltwx","fox46carolinas","fox46charlotte","hill","nascar","n.c","nc","ncpol","ncsen","northcarolina","panthers","pnc","power98fm","sports","uncc","wbtv","wccbcharlotte","wcnc","weather","wpeg","wncn"]
+
+  stop_globalcrime = ['abuse','abused', 'accused','amber','amberalert','arrest', 'arrested', 'assault','case','charged','convicted', 'death','dui', 'killed',"killer",'killing', 'murder', 'police','rape','sexual','shoot', 'shooting','shot','shots',"stab","stabbing",'suspect', 'victim','violent', 'violence']
+  stop_globalevents = ['anti','clash', 'clashes','killed', 'killing', 'massive', 'police', 'protest', 'protests','video','videos', 'violence','watchinga']
+  stop_globaldisasters = ['blizzard','cyclone','flood','floods','earthquake','event','events','national','tornado','tsunami','twitzip', 'typhoon','utc','victim', 'victims','volcano','warning','weather']
+  stop_globalincidents = ['attack','attacks','bomb', 'crash', 'dead','death','explosion','evacuated', 'fire','injured','killed',"live", 'people','police', 'terrorist','threat', 'toll']
+  stop_globalpress = ['live','police','video'] # not done yet
+  stop_movie = ['academy','actress', 'award','awards','blu-ray','box',"cinemacon",'disney','film','films','fox','hd', 'movie','movies', 'office','official','oscars','premier','premiers','review','starring','trailer','trailers', 'win','wins']
+  stop_music = ['album', 'awards', 'billboard','hip', 'hiphopdx','hop','instagram', 'itunes','itunesmusic','listen', 'music','official','premier','premiers', 'rolling','rollingstone',  'stone',  'single', 'top', 'vevo', 'video','watch']
+  stop_sports = ['football', 'game','games', 'instagram','live', 'nba','ncaa', 'nfl','nhl','points','season','sport','sports', 'top', 'video','watch']
+  stop_nfl = ['bowl','football','game','nfl','playoff','super']
+  stop_tvnews = ['abc','app','cbs','cbstvstudios','cw','episode', 'exo',  'fox','foxtv', 'hbo','instagram', 'live','mtv', 'nbc','premier', 'season','series','show','showtime', 'tv','watch']
+  stop_fortuneceo = ['business','ceo','ceos','fortune']
+  stop_fortunecompany = ['business','ceo','ceos','fortune']
+  stop_business = ['business','ceo','ceos','fortune','2014']
+  stop_celebrity = ['awards','instagram','live', 'movie', 'people', 'photo', 'photos', 'star']
+  
+   end_time = int(time.time())-3600*0
   start_time = end_time-3600*4
-  topic = 100105
-  h = HCluster(HCluster.get_test_data(topic, start_time, end_time), stop_seattle)
+  topic = 100069
+  h = HCluster(HCluster.get_test_data(topic, start_time, end_time), stop_nfl)
   keywords, content, id_map = h.get_features()
   dic = h.prepare_grid(keywords)
-  clusters = h.cluster(content, dic)
-  id_map = h.label_articles(clusters, id_map)
-  h.print_cluster(clusters,id_map)
+  clusters = h.cluster_with_keywords(content, dic)
+  id_map = h.label_articles_with_keywords(clusters, id_map)
+  h.print_cluster_with_keywords(clusters,id_map)
